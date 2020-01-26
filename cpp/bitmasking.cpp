@@ -4,7 +4,6 @@
 //
 //  Created by Sameer Mann on 16/08/19.
 //  Copyright © 2019 Sameer Mann. All rights reserved.
-//
 
 #include <stdio.h>
 using namespace std;

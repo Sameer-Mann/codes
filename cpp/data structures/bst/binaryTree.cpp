@@ -27,27 +27,32 @@ be given in the input
 height balanced tree means that at every node the difference between the height of left and right child is less than or equal to one
 If we are given an preorder and an inorder traversal for a tree there exists a unique tree otherwise if we have only one of them then there can be multiple trees possible
 same is with post + inorder */
-node* buildTree(){
+node* buildTree()
+{
     int d;cin>>d;if(d == -1){return NULL;}
     node *root = new node(d);root->left = buildTree();root->right = buildTree();return root; 
 }
-void print(node *root){
+void print(node *root)
+{
     if(root == NULL){return;}
     cout<<root->data<<" ";print(root->left);print(root->right);
 }
-void printInOrder(node *root){
+void printInOrder(node *root)
+{
     if(root == NULL){
         return;
     }
     printInOrder(root->left);cout<<root->data<<" ";printInOrder(root->right);
 }
-void printPostOrder(node *root){
+void printPostOrder(node *root)
+{
     if(root == NULL){
         return;
     }
     printPostOrder(root->left);printPostOrder(root->right);cout<<root->data<<" ";
 }
-void printkthlevel(node*root,int k){
+void printkthlevel(node*root,int k)
+{
     if(root==NULL){
         return;
     }
@@ -59,11 +64,14 @@ void printkthlevel(node*root,int k){
     printkthlevel(root->right,k-1);
     return;
 }
-int height(node*root){
+int height(node*root)
+{
     if(root == NULL){return 0;}
+    if(root->left == NULL && root->right == NULL){return 1;}
     return (max(height(root->left),height(root->right))+1);
 }
-void printAllLevels(node*root){
+void printAllLevels(node*root)
+{
     int h = height(root);
     for (int i = 1; i <= h; ++i)
     {
@@ -72,7 +80,8 @@ void printAllLevels(node*root){
     }
     return;
 }
-void bfs(node *root){
+void bfs(node *root)
+{
     queue<node*> q;
     q.push(root);
     q.push(NULL);
@@ -97,20 +106,23 @@ void bfs(node *root){
         }
     }
 }
-int countAllNode(node*root){
+int countAllNode(node*root)
+{
     if(root==NULL){
         return 0;
     }
     return(1+countAllNode(root->left)+countAllNode(root->right));
 }
-int sumAllNodes(node*root){
+int sumAllNodes(node*root)
+{
     if(root==NULL){
         return 0;
     }
     return(root->data + sumAllNodes(root->left) +sumAllNodes(root->right));
 }
 // this function calculates the height for every subtree at every node O(n^2)
-int diameter(node*root){
+int diameter(node*root)
+{
     if(root==NULL){
         return 0;
     }
@@ -139,7 +151,8 @@ int diameter(node*root){
 //     p.diameter = max((left.height+right.height),max(left.diameter,right,diameter));
 //     return p;
 // }
-int replaceBySum(node*&root){
+int replaceBySum(node*&root)
+{
     if(root==NULL){
         return 0;
     }
@@ -208,7 +221,7 @@ node* treeFromTraversal(int *inorderArray,int *preorderArray,int start,int end){
     root->right = treeFromTraversal(inorderArray,preorderArray,index+1,end);
     return root;
 }
-bool isIdentical(Node* r1,Node* r2)
+bool isIdentical(node* r1,node* r2)
 {
     if(r1 == NULL && r2 == NULL)
     {
@@ -220,9 +233,9 @@ bool isIdentical(Node* r1,Node* r2)
     
     bool ans1 =  r1->data == r2->data;
     
-    bool ans2 = f(r1->left,r2->left);
+    bool ans2 = isIdentical(r1->left,r2->left);
     
-    bool ans3 = f(r1->right,r2->right);
+    bool ans3 = isIdentical(r1->right,r2->right);
     
     return ans1&&ans2&&ans3;
 }

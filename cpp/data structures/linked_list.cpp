@@ -142,7 +142,8 @@ void print(node* head){
 }
 void reverseList(node*&head){
 	node*c = head;node*p = NULL;node*n;
-	while(c!=NULL){
+	while(c!=NULL)
+	{
 		// save the next node
 		n = c->next;
 		// make the current node point to previoius
@@ -191,12 +192,12 @@ node* kthNodeFromLast(node*head,int k){
 	}
 	return slow;
 }
-node* mergeTwoSortedLinkedList(node*a,node*b){
+/* node* mergeTwoSortedLinkedList(node*a,node*b){
 	if(a==NULL){
 		return b;
 	}
 	return head;
-}
+} */
 /*taking linked list as input using operator overloading
 istream& operator>>(istream &is,node*&head){
 	buildList(head);
