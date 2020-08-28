@@ -1,0 +1,2 @@
+"g++ -std=c++17 ${file} -o ${file_path}/${file_base_name} && echo 'Build Finished' && ${file_path}/${file_base_name} < '/Users/sameer/Desktop/input.txt' > '/Users/sameer/Desktop/output.txt'"
+python3 '$file' < /Users/sameer/Desktop/input.txt > /Users/sameer/Desktop/output.txt
