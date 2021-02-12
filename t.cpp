@@ -1,7 +1,7 @@
 #pragma GCC optimize("Ofast") 
 #pragma GCC target("avx,avx2,fma")
 #include "bits/stdc++.h"
-#define int long long
+// #define int long long
 #define fi first
 #define se second
 #define pb push_back
@@ -27,24 +27,20 @@ template<typename T>
 void print(T t){cout<<(t);cout<<'\n';}
 template<typename T, typename... Args>
 void print(T t, Args... args){cout << (t) <<' ';print(args...);}
-const int MOD = 998244353;
 const int N = 2e5+1;
-// const int MOD = 7340033;
+const int MOD = 998244353;
 const int root = 363395222;
 const int root_1 = 704923114;
 const int root_pw = 1 << 19;
 int A[N],ans[N];
-int bpow(int x,int n){
-    if(n==1)return x;
-    int v = bpow(x,n/2);
-    v = (v*v)%MOD;
-    return (n&1?(x*v)%MOD:v);
-}
-inline int add(int x,int y){return (x+y)%MOD;}
-inline int mul(int x,int y){return (x*y)%MOD;}
-int modinv(int x){return bpow(x,MOD-2);}
-void ntt(int a[],int n, bool invert=0)
+inline int add(int a,int b){a+=b;if(a>=MOD)a-=MOD;return a;}
+inline int sub(int a,int b){a-=b;if(a<0)a+=MOD;return a;}
+inline int mul(int a,int b){return (a*1ll*b)%MOD;}
+inline int bpow(int a,int b){int rt=1;while(b>0){if(b&1)rt=mul(rt,a);a=mul(a,a);b>>=1;}return rt;}
+inline int MODINV(int x){return bpow(x,MOD-2);}
+void ntt(vector<int> & a, bool invert)
 {
+    int n = a.size();
     for (int i = 1, j = 0; i < n; i++) {
         int bit = n >> 1;
         for (; j & bit; bit >>= 1){
@@ -72,43 +68,40 @@ void ntt(int a[],int n, bool invert=0)
         }
     }
     if (invert) {
-        int n_1 = modinv(n);
-        for(int i=0;i<n;i++)
-            a[i] = (1LL * a[i] * n_1 % MOD);
+        int n_1 = MODINV(n);
+        for (int & x : a)
+            x = (1LL * x * n_1 % MOD);
     }
 }
-void calc1(int b[],int n){
-    int num=1,den=1;
-    b[0]=1;
-    int mid = (n+1)/2;
-    for(int i=0;i<mid;i++){
-        num = mul(num,n-i);
-        den = mul(den,i+1);
-        b[i+1] = mul(num,modinv(den))%MOD;
-    }
-}
-void print1(int a[],int n){
-    for(int i=1;i<n and a[i]>0;i++)cout<<a[i]<<' ';
-    cout<<endl;
-}
-void mul1(int a[],int b[],int n1,int n2){
+vi mul1(vi a,vi b)
+{
+    int n1=a.size(),n2=b.size();
     int n = n1 + n2 - 1, i;
     int m = 1; while(m<n) m<<=1;
-    for(i=n1;i<m;++i) a[i]=0;
-    for(i=n2;i<m;++i) b[i]=0;
-    ntt(a,m,0);ntt(b,m,0);
-    for(i=0;i<m;++i) a[i]=mul(a[i],b[i]);
-    ntt(a,m,1);
+    a.resize(m);
+    b.resize(m);
+    ntt(a,0);ntt(b,0);
+    vi c(m);
+    for(i=0;i<m;++i) c[i]=mul(a[i],b[i]);
+    ntt(c,1);
+    return c;
+}
+vi calc1(int n){
+    vi ncr1(n+1,1);
+    int num=1,den=1;
+    for(int i=0;i<n;i++){
+        num = mul(num,n-i);
+        den = mul(den,i+1);
+        ncr1[i+1] = mul(num,MODINV(den))%MOD;;
+    }
+    return ncr1;
 }
 void solve()
 {
     int n;cin>>n;
-    int ans[N],arr1[root_pw>>1],arr2[root_pw>>1];
+    int ans[N];
     memset(ans, 0, sizeof(ans));
-    memset(arr1, 0, sizeof(arr1));
-    memset(arr2, 0, sizeof(arr2));
-    for(int i=0;i<n;++i)
-    {
+    for(int i=0;i<n;++i){
         cin>>A[i];
     }
     // print1(A,n); 
@@ -124,28 +117,28 @@ void solve()
             bits++;
             continue;
         }
-        m=n-count;
-        calc1(arr1,count);
-        calc1(arr2,m);
-        for(int i=0;i<=count;i+=2)arr1[i]=0;
-        for(int i=count+1;i<(root_pw>>1);i++)arr1[i]=0;
-        for(int i=m+1;i<root_pw>>1;i++)arr2[i]=0;
-        mul1(arr1,arr2,count+1,m+1);
-
-        print1(arr1,n);
-        for(int i=0;i<=n;i++){
-            ans[i] = add(ans[i],mul(arr1[i],1));
+        vi arr1,arr2;
+        arr1 = calc1(count);
+        if(count==n){
+            for(int m=1;m<=n;m+=2){
+                ans[m-1] = add(ans[m-1],mul(val,arr1[m]));
+            }
+            continue;
+        }
+        for(int i=0;i<len(arr1);i+=2)arr1[i]=0;
+        arr2 = calc1(n-count);
+        vi ans1 = mul1(arr1,arr2);
+        for(int i=1;i<=n;i++){
+            ans[i] = add(ans[i],mul(ans1[i],val));
         }
         bits++;
-        break;
     }
-    cout<<endl;
-    // int q;cin>>q;
-    // for(int i=2;i<=n;i++)ans[i]=add(ans[i-1],ans[i]);
-    // for(int i=0;i<q;++i){
-        // int m;cin>>m;
-        // print(ans[m]);
-    // }
+    int q;cin>>q;
+    for(int i=2;i<=n;i++)ans[i]=add(ans[i-1],ans[i]);
+    for(int i=0;i<q;++i){
+        int m;cin>>m;
+        print(ans[m]);
+    }
 }
 int32_t main()
 {
